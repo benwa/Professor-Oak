@@ -1,0 +1,25 @@
+{
+  "name": "professor-oak",
+  "version": "1.0.0",
+  "description": "A Pokémon GO Slack bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benwa/Professor-Oak.git"
+  },
+  "author": "Bennett Blodinger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benwa/Professor-Oak/issues"
+  },
+  "homepage": "https://github.com/benwa/Professor-Oak#readme",
+  "dependencies": {
+    "dotenv": "^2.0.0",
+    "geocoder": "^0.2.2",
+    "pokemon-go-api": "0.0.11",
+    "pokemon-go-node-api": "^1.3.0"
+  }
+}
