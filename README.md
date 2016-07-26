@@ -24,5 +24,5 @@ It would be wise to use a second Pokémon GO account to run this under not assoc
 0. `node index.js`
 
 ## Uses
-* [Pokemon-GO-node-api](/Armax/Pokemon-GO-node-api)
-* [Botkit](/howdyai/botkit)
+* [Pokemon-GO-node-api](https://github.com/Armax/Pokemon-GO-node-api)
+* [Botkit](https://github.com/howdyai/botkit)
