@@ -1,10 +1,11 @@
 'use strict';
 
 require('dotenv').config();
-var PokemonGO = require('pokemon-go-node-api');
+const PokemonGO = require('pokemon-go-node-api');
+const moment = require('moment');
 
 
-var location = {
+const location = {
     type: 'coords',
     coords: {
         latitude: Number(process.env.PGO_LATITUDE || 0),
@@ -13,10 +14,12 @@ var location = {
     }
 };
 
-var username = process.env.PGO_USERNAME || 'USER';
-var password = process.env.PGO_PASSWORD || 'PASS';
-var provider = process.env.PGO_PROVIDER || 'google';
-var interval = process.env.PGO_INTERVAL || 10000;
+const username = process.env.PGO_USERNAME || 'USER';
+const password = process.env.PGO_PASSWORD || 'PASS';
+const provider = process.env.PGO_PROVIDER || 'google';
+const interval = process.env.PGO_INTERVAL || 10000;
+
+let seenList = [];
 
 PokemonGO.init(username, password, location, provider, function(error) {
     if (error) throw error;
@@ -29,25 +32,27 @@ PokemonGO.init(username, password, location, provider, function(error) {
 
         console.info('[i] Username: %s', profile.username);
 
-        // setInterval(function() {
+        setInterval(function() {
             PokemonGO.Heartbeat(function (error, hb) {
-                if (error) {
-                    console.error(error);
-                }
-                console.log(hb);
-                for (var i = hb.cells.length - 1; i >= 0; i--) {
-                    if (hb.cells[i].NearbyPokemon[0]) {
-                        hb.cells[i].NearbyPokemon.map(function(j) {
-                            console.log(j);
-                            console.log(i);
-                            var pokemon = PokemonGO.pokemonlist[parseInt(j.PokedexNumber)-1];
-                            console.log('[+] There is a %s at %d meters', pokemon.name, j.DistanceMeters);
-                        })
-                        // console.log(hb.cells[i].NearbyPokemon[0]);
-                    }
-                }
+                if (error) console.error(error);
 
+                hb.cells.map(function(j) {
+                    j.WildPokemon.map(function(k) {
+                        // Only alert for spawns not seen yet
+                        if (!seenList.includes(Number(k.EncounterId))) {
+                            seenList.push(Number(k.EncounterId));
+                            let pokemon = PokemonGO.pokemonlist[parseInt(k.pokemon.PokemonId)-1];
+
+                            // Only alert for spawns greater than a minute
+                            if (k.TimeTillHiddenMs > 60000) {
+                                let timeLeft = moment.duration(k.TimeTillHiddenMs, 'milliseconds');
+                                console.log('[+] A wild %s appeared! It will despawn in %d minutes!', pokemon.name, timeLeft.minutes());
+                            }
+
+                        }
+                    });
+                });
             });
-        // }, interval);
+        }, interval);
     });
 });
