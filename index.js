@@ -5,6 +5,7 @@ const PokemonGO = require('pokemon-go-node-api');
 const moment = require('moment');
 
 
+// Set up Pokémon GO API
 const provider = process.env.PGO_PROVIDER || 'google';
 const username = process.env.PGO_USERNAME || 'USER';
 const password = process.env.PGO_PASSWORD || 'PASS';
@@ -18,14 +19,17 @@ const location = {
     }
 };
 
+// Load the 64x64 sprites
+const sprites = JSON.parse(fs.readFileSync(__dirname + '/sprites.json', 'utf8'));
 
 let seenList = [];
 
+// Initalize the Pokémon GO API
 PokemonGO.init(username, password, location, provider, function(error) {
     if (error) throw error;
 
-    console.info('[i] Current location: %s', PokemonGO.playerInfo.locationName);
-    console.info('[i] lat/long/alt: %d, %d, %d', PokemonGO.playerInfo.latitude, PokemonGO.playerInfo.longitude, PokemonGO.playerInfo.altitude);
+    console.info(`[i] Current location: ${PokemonGO.playerInfo.locationName}`);
+    console.info(`[i] lat/long/alt: ${PokemonGO.playerInfo.latitude}, ${PokemonGO.playerInfo.longitude}, ${PokemonGO.playerInfo.altitude}`);
 
     PokemonGO.GetProfile(function(error, profile) {
         if (error) throw error;
@@ -40,13 +44,16 @@ PokemonGO.init(username, password, location, provider, function(error) {
                     j.WildPokemon.map(function(k) {
                         // Only alert for spawns not seen yet
                         if (!seenList.includes(Number(k.EncounterId))) {
+
+                            // Add Pokémon to seen list.  This prevents duplicate notifications.
                             seenList.push(Number(k.EncounterId));
+
                             let pokemon = PokemonGO.pokemonlist[parseInt(k.pokemon.PokemonId)-1];
 
                             // Only alert for spawns greater than a minute
                             if (k.TimeTillHiddenMs > 60000) {
                                 let timeLeft = moment.duration(k.TimeTillHiddenMs, 'milliseconds');
-                                console.log('[+] A wild %s appeared! It will despawn in %d minutes!', pokemon.name, timeLeft.minutes());
+                                console.log(`[+] A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes()} minutes!`);
                             }
 
                         }
