@@ -21,6 +21,7 @@ It would be wise to use a second Pokémon GO account to run this under not assoc
     | `PGO_LONGITUDE` | longitude (default `0`)                                 |
     | `PGO_ALTITUDE`  | altitude (default `0`)                                  |
 
+0. `npm install`
 0. `node index.js`
 
 ## Uses
