@@ -33,6 +33,7 @@ const sprites = JSON.parse(fs.readFileSync(__dirname + '/sprites.json', 'utf8'))
 
 // Map base
 const mapBase = 'https://maps.googleapis.com/maps/api/staticmap?format=png32&zoom=17&size=400x300&&style=feature:administrative|visibility:off&style=feature:landscape.man_made|element:geometry.fill|color:0x89ff82&style=feature:landscape.man_made|element:labels|visibility:off&style=feature:poi|visibility:simplified&style=feature:poi|element:labels|visibility:off&style=feature:road|element:geometry.fill|color:0x808080&style=feature:road|element:geometry.stroke|color:0xedfe91&style=feature:road|element:labels|visibility:off&style=feature:transit|visibility:off&style=feature:water|element:geometry|color:0x1a8bd9&style=feature:water|element:labels|visibility:off&style=feature:poi.park|color:0x03a286&style=feature:poi&markers=icon:';
+
 let seenList = [];
 
 // Initalize the Pokémon GO API
@@ -54,16 +55,20 @@ PokemonGO.init(username, password, location, provider, function(error) {
                 hb.cells.map(function(j) {
                     j.WildPokemon.map(function(k) {
                         // Only alert for spawns not seen yet
-                        if (!seenList.includes(Number(k.EncounterId))) {
+                        if (!seenList.some(function(element){ return element.EncounterId === Number(k.EncounterId) })) {
 
                             // Add Pokémon to seen list.  This prevents duplicate notifications.
-                            seenList.push(Number(k.EncounterId));
+                            let timeLeft = moment.duration(k.TimeTillHiddenMs, 'milliseconds');
+                            let expiration = timeLeft + moment.now();
+                            seenList.push({
+                                'EncounterId': Number(k.EncounterId),
+                                'Expiration': expiration
+                            });
 
                             let pokemon = PokemonGO.pokemonlist[parseInt(k.pokemon.PokemonId)-1];
 
                             // Only alert for spawns greater than a minute
                             if (k.TimeTillHiddenMs > 60000) {
-                                let timeLeft = moment.duration(k.TimeTillHiddenMs, 'milliseconds');
                                 console.log(`[+] A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes()} minutes!`);
 
                                 // Build map
@@ -85,11 +90,15 @@ PokemonGO.init(username, password, location, provider, function(error) {
                                         'image_url': map
                                     }]
                                 });
-
-                                // TODO: timer to remove EncounterId from seenList
                             }
 
                         }
+                        // Clean up the seen list
+                        seenList.map(function(object, index) {
+                            if (moment.now() > object.Expiration) {
+                                seenList.splice(index, 1);
+                            }
+                        });
                     });
                 });
             });
