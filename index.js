@@ -5,6 +5,10 @@ const PokemonGO = require('pokemon-go-node-api');
 const moment = require('moment');
 
 
+const provider = process.env.PGO_PROVIDER || 'google';
+const username = process.env.PGO_USERNAME || 'USER';
+const password = process.env.PGO_PASSWORD || 'PASS';
+const interval = process.env.PGO_INTERVAL || 10000;
 const location = {
     type: 'coords',
     coords: {
@@ -14,10 +18,6 @@ const location = {
     }
 };
 
-const username = process.env.PGO_USERNAME || 'USER';
-const password = process.env.PGO_PASSWORD || 'PASS';
-const provider = process.env.PGO_PROVIDER || 'google';
-const interval = process.env.PGO_INTERVAL || 10000;
 
 let seenList = [];
 
