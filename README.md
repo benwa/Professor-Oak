@@ -1,7 +1,9 @@
 # Professor Oak
 
 Professor Oak is a Pokémon GO chat bot  
-And it's a work in progress
+A work in progress Node.js version of [Slack-Pokemon-Notifier](https://github.com/grufftech/Slack-Pokemon-Notifier)
+
+![screen shot](http://i.imgur.com/7BMiV1T.png)
 
 ## A note on banning
 It would be wise to use a second Pokémon GO account to run this under not associated with your primary (in terms of what email address you sign up with).
