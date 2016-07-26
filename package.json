@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/benwa/Professor-Oak#readme",
   "dependencies": {
+    "botkit": "^0.2.2",
     "dotenv": "^2.0.0",
+    "fs": "0.0.2",
     "moment": "^2.14.1",
     "pokemon-go-node-api": "git+https://github.com/Armax/Pokemon-GO-node-api.git"
   }
