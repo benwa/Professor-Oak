@@ -10,7 +10,7 @@ const PokemonGO = require('pokemon-go-node-api');
 // Set up Botkit
 const controller = Botkit.slackbot();
 const bot = controller.spawn({
-    token: process.env.PGO_SLACK_TOKEN || null
+    'token': process.env.PGO_SLACK_TOKEN || null
 }).startRTM();
 const channel = process.env.PGO_SLACK_CHANNEL || 'general';
 
@@ -20,11 +20,11 @@ const username = process.env.PGO_USERNAME || 'USER';
 const password = process.env.PGO_PASSWORD || 'PASS';
 const interval = process.env.PGO_INTERVAL || 10000;
 const location = {
-    type: 'coords',
-    coords: {
-        latitude: Number(process.env.PGO_LATITUDE || 0),
-        longitude: Number(process.env.PGO_LONGITUDE || 0),
-        altitude: Number(process.env.PGO_ALTITUDE || 0)
+    'type': 'coords',
+    'coords': {
+        'latitude': Number(process.env.PGO_LATITUDE || 0),
+        'longitude': Number(process.env.PGO_LONGITUDE || 0),
+        'altitude': Number(process.env.PGO_ALTITUDE || 0)
     }
 };
 
@@ -40,13 +40,13 @@ let seenList = [];
 PokemonGO.init(username, password, location, provider, function(error) {
     if (error) throw error;
 
-    console.info(`[i] Current location: ${PokemonGO.playerInfo.locationName}`);
-    console.info(`[i] lat/long/alt: ${PokemonGO.playerInfo.latitude}, ${PokemonGO.playerInfo.longitude}, ${PokemonGO.playerInfo.altitude}`);
+    console.info(`info: Current location: ${PokemonGO.playerInfo.locationName}`);
+    console.info(`info: lat/long/alt: ${PokemonGO.playerInfo.latitude}, ${PokemonGO.playerInfo.longitude}, ${PokemonGO.playerInfo.altitude}`);
 
     PokemonGO.GetProfile(function(error, profile) {
         if (error) throw error;
 
-        console.info('[i] Username: %s', profile.username);
+        console.info(`info: Username: ${profile.username}`);
 
         setInterval(function() {
             PokemonGO.Heartbeat(function (error, hb) {
@@ -69,7 +69,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
 
                             // Only alert for spawns greater than a minute
                             if (k.TimeTillHiddenMs > 60000) {
-                                console.log(`[+] A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes()} minutes!`);
+                                console.log(`info: A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes()} minutes!`);
 
                                 // Build map
                                 let map = `${mapBase}${sprites[k.pokemon.PokemonId]}|${k.Latitude},${k.Longitude}`;
@@ -82,7 +82,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
                                     'username': 'Professor Oak',
                                     'icon_url': 'http://i.imgur.com/zkuUCrq.png',
                                     'channel': channel,
-                                    'text': `A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes()} minutes!`,
+                                    'text': `A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes().humanize()}!`,
                                     'attachments': [{
                                         'fallback': `${k.Latitude}, ${k.Longitude}`,
                                         'title': 'Directions',
@@ -95,7 +95,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
                         }
                         // Clean up the seen list
                         seenList.map(function(object, index) {
-                            if (moment.now() > object.Expiration) {
+                            if (moment.now().isAfter(object.Expiration)) {
                                 seenList.splice(index, 1);
                             }
                         });
