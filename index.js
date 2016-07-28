@@ -69,7 +69,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
 
                             // Only alert for spawns greater than a minute
                             if (k.TimeTillHiddenMs > 60000) {
-                                console.log(`info: A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes()} minutes!`);
+                                console.log(`info: A wild ${pokemon.name} appeared! It will run away in ${timeLeft.humanize()}`);
 
                                 // Build map
                                 let map = `${mapBase}${sprites[k.pokemon.PokemonId]}|${k.Latitude},${k.Longitude}`;
@@ -82,7 +82,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
                                     'username': 'Professor Oak',
                                     'icon_url': 'http://i.imgur.com/zkuUCrq.png',
                                     'channel': channel,
-                                    'text': `A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes().humanize()}!`,
+                                    'text': `A wild ${pokemon.name} appeared! It will run away in ${timeLeft.humanize()}!`,
                                     'attachments': [{
                                         'fallback': `${k.Latitude}, ${k.Longitude}`,
                                         'title': 'Directions',
@@ -95,7 +95,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
                         }
                         // Clean up the seen list
                         seenList.map(function(object, index) {
-                            if (moment.now().isAfter(object.Expiration)) {
+                            if (moment().isAfter(object.Expiration)) {
                                 seenList.splice(index, 1);
                             }
                         });
