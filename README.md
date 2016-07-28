@@ -30,6 +30,26 @@ It would be wise to use a second Pokémon GO account to run this under not assoc
 0. `npm install`
 0. `node index.js`
 
+## Ignore List
+Send `@professor-oak: ignore {id}` and the Professor will add it to the ignore list.
+```irc
+@professor-oak: ignore 16
+Okay, I'll ignore Pidgey.
+```
+
+Send `@professor-oak: unignore {id}` and the Professor will remove it from the ignore list.
+```irc
+@professor-oak: unignore 16
+Okay, I'll watch out for Pidgey.
+```
+
+Send `@professor-oak: ignore list` and the Professor will tell you the current ignore list.
+```irc
+@professor-oak: ignore list
+I am currently ignoring Charmeleon, Wartortle, Mewtwo, Tentacruel, Aerodactyl, Omanyte, Slowpoke, Pidgeot, Arbok.
+```
+
 ## Uses
 * [Pokemon-GO-node-api](https://github.com/Armax/Pokemon-GO-node-api)
-* [Botkit](https://github.com/howdyai/botkit)
+* [Botkit](https://howdy.ai/botkit/)
+* [Redis](http://redis.io/)
