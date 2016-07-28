@@ -5,14 +5,22 @@ const Botkit = require('botkit');
 const fs = require('fs');
 const moment = require('moment');
 const PokemonGO = require('pokemon-go-node-api');
-
+const redisStorage = require('botkit-storage-redis')();
 
 // Set up Botkit
-const controller = Botkit.slackbot();
+const controller = Botkit.slackbot({
+    'storage': redisStorage
+});
 const bot = controller.spawn({
     'token': process.env.PGO_SLACK_TOKEN || null
 }).startRTM();
 const channel = process.env.PGO_SLACK_CHANNEL || 'general';
+
+// Set up bot commands
+controller.hears(['^ignore (\\d+)$'], ['direct_mention'], function(bot, message) {
+    let PokemonId = message.match[1];
+    bot.reply(message, `Alrighty, I'll ignore ${PokemonGO.pokemonlist[parseInt(PokemonId)-1].name} from now on`);
+});
 
 // Set up Pokémon GO API
 const provider = process.env.PGO_PROVIDER || 'google';
@@ -69,7 +77,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
 
                             // Only alert for spawns greater than a minute
                             if (k.TimeTillHiddenMs > 60000) {
-                                console.log(`info: A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes()} minutes!`);
+                                console.log(`info: A wild ${pokemon.name} appeared! It will run away in ${timeLeft.humanize()}!`);
 
                                 // Build map
                                 let map = `${mapBase}${sprites[k.pokemon.PokemonId]}|${k.Latitude},${k.Longitude}`;
@@ -82,7 +90,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
                                     'username': 'Professor Oak',
                                     'icon_url': 'http://i.imgur.com/zkuUCrq.png',
                                     'channel': channel,
-                                    'text': `A wild ${pokemon.name} appeared! It will run away in ${timeLeft.minutes().humanize()}!`,
+                                    'text': `A wild ${pokemon.name} appeared! It will run away in ${timeLeft.humanize()}!`,
                                     'attachments': [{
                                         'fallback': `${k.Latitude}, ${k.Longitude}`,
                                         'title': 'Directions',
@@ -95,7 +103,7 @@ PokemonGO.init(username, password, location, provider, function(error) {
                         }
                         // Clean up the seen list
                         seenList.map(function(object, index) {
-                            if (moment.now().isAfter(object.Expiration)) {
+                            if (moment().isAfter(object.Expiration)) {
                                 seenList.splice(index, 1);
                             }
                         });
