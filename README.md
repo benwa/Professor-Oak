@@ -9,8 +9,11 @@ A work in progress Node.js version of [Slack-Pokemon-Notifier](https://github.co
 It would be wise to use a second Pokémon GO account to run this under not associated with your primary (in terms of what email address you sign up with).
 
 ## Installation
-- [ ] Slack setup
+### Slack
+0. Go to https://my.slack.com/services/new/bot and register a new bot
+0. Add the bot to at least one channel
 
+### Server
 0. `git clone https://github.com/benwa/Professor-Oak`
 0. `nano Professor-Oak/.env`
 0. Add the following environment variables
